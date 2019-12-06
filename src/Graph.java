@@ -14,7 +14,7 @@ public class Graph {
 
     public static void main(String[] args) {
         Graph graph1 = new Graph();
-        graph1.makeGraph("demands2.txt");
+        graph1.makeGraph("src" + File.separator + "demands1.txt");
         System.out.println(graph1.toString());
         ;
     }
