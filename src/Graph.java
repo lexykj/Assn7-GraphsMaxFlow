@@ -17,20 +17,30 @@ public class Graph {
         graph1.makeGraph("src" + File.separator + "demands1.txt");
         System.out.println(graph1.toString());
         MaxFlow graph1Flow = new MaxFlow(graph1);
-//        for(int i = 0; i < graph1.vertexCt; i++){
-//            for(int j = 0; j < graph1.vertexCt; j++){
-//                System.out.print(graph1Flow.GRAPH_MATRIX[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
-        GraphNode[] path = graph1Flow.findPath();
-        int lastNode = 0;
-        System.out.print(path[lastNode].toString());
-        while(!path[lastNode].succ.isEmpty()){
-            lastNode = path[lastNode].succ.get(0).to;
-            System.out.print(path[lastNode].toString());
+        for(int i = 0; i < graph1.vertexCt; i++){
+            for(int j = 0; j < graph1.vertexCt; j++){
+                System.out.print(graph1Flow.GRAPH_MATRIX[i][j] + " ");
+            }
+            System.out.println();
         }
-        System.out.println(graph1Flow.maxPathFlow(path));
+        GraphNode[] path = graph1Flow.findPath();
+        graph1Flow.augmentPath(path);
+        System.out.println();
+
+        int from = 0;
+        System.out.print(path[from].toString());
+        while(!path[from].succ.isEmpty()){
+            from = path[from].succ.get(0).to;
+            System.out.print(path[from].toString());
+        }
+        System.out.println(graph1Flow.maxPathFlow(path) + "\n");
+
+        for(int i = 0; i < graph1.vertexCt; i++){
+            for(int j = 0; j < graph1.vertexCt; j++){
+                System.out.print(graph1Flow.residualMatrix[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 
     public int getVertexCt() {

@@ -92,9 +92,17 @@ public class MaxFlow {
     /**
      * Updates the residual matrix according to the max flow of the path
      */
-    private void augmentPath(GraphNode[] path){
+    void augmentPath(GraphNode[] path){
         int flow = maxPathFlow(path);
         // subtract the capacity from edge(to, from) and add to edge(from, to).
+        int from = 0;
+        int to;
+        while(!path[from].succ.isEmpty()){
+            to = path[from].succ.getFirst().to;
+            this.residualMatrix[from][to] -= flow;
+            this.residualMatrix[to][from] += flow;
+            from = to;
+        }
     }
 
     /**
@@ -103,12 +111,12 @@ public class MaxFlow {
      * @return the max flow of the path
      */
     int maxPathFlow(GraphNode[] path){
-        int lastNode = 0;
+        int from = 0;
         // maxFlow just needs to start at a really big number
         int maxFlow = 1000000;
-        while(!path[lastNode].succ.isEmpty()){
-            maxFlow = Math.min(path[lastNode].succ.get(0).capacity, maxFlow);
-            lastNode = path[lastNode].succ.get(0).to;
+        while(!path[from].succ.isEmpty()){
+            maxFlow = Math.min(path[from].succ.get(0).capacity, maxFlow);
+            from = path[from].succ.get(0).to;
         }
         return maxFlow;
     }
