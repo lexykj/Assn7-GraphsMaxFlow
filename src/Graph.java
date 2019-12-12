@@ -16,12 +16,20 @@ public class Graph {
         Graph graph1 = new Graph();
         graph1.makeGraph("src" + File.separator + "demands1.txt");
         System.out.println(graph1.toString());
-        MaxFlow graph1Flow = new MaxFlow(graph1.G);
-        for(int i = 0; i < graph1.vertexCt; i++){
-            for(int j = 0; j < graph1.vertexCt; j++){
-                System.out.print(graph1Flow.graphMatrix[i][j] + " ");
-            }
-            System.out.println();
+        MaxFlow graph1Flow = new MaxFlow(graph1);
+//        for(int i = 0; i < graph1.vertexCt; i++){
+//            for(int j = 0; j < graph1.vertexCt; j++){
+//                System.out.print(graph1Flow.GRAPH_MATRIX[i][j] + " ");
+//            }
+//            System.out.println();
+//        }
+        GraphNode[] path = graph1Flow.findPath();
+        int lastNode = 0;
+        System.out.print(path[lastNode].toString());
+        while(!path[lastNode].succ.isEmpty()){
+            lastNode = path[lastNode].succ.get(0).to;
+            System.out.print(path[lastNode].toString());
+
         }
     }
 

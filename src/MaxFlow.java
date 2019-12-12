@@ -1,26 +1,27 @@
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Queue;
 
 public class MaxFlow {
-    int[][] graphMatrix;
+    int[][] GRAPH_MATRIX;
     int[][] residualMatrix;
     LinkedList<LinkedList<Integer>> allUsedPaths;
-    int numOfNodes;
+    int NUM_OF_NODES;
+    Graph ORIGINAL_GRAPH;
 
-    MaxFlow(GraphNode[] graphList){
-        this.graphMatrix = this.toMatrix(graphList);
-        this.numOfNodes = graphList.length;
-        this.residualMatrix = this.graphMatrix;
+    MaxFlow(Graph graph){
+        this.ORIGINAL_GRAPH = graph;
+        this.GRAPH_MATRIX = this.toMatrix(graph);
+        this.NUM_OF_NODES = graph.G.length;
+        this.residualMatrix = this.GRAPH_MATRIX;
         this.allUsedPaths = new LinkedList<>();
+
     }
 
     /**
      * Takes a graph (in the form of an adjacency list) and turns it into a matrix.
-     * @param graphList
+     * @param graph
      */
-    int[][] toMatrix(GraphNode[] graphList){
-        int numOfNodes = graphList.length;
+    int[][] toMatrix(Graph graph){
+        int numOfNodes = graph.G.length;
         int[][] graphMatrix = new int[numOfNodes][numOfNodes];
 
         // j loop sets all items to zero
@@ -29,8 +30,8 @@ public class MaxFlow {
             for(int j=0; j < numOfNodes; j++){
                 graphMatrix[i][j] = 0;
             }
-            for(int k = 0; k < graphList[i].succ.size(); k++){
-                graphMatrix[i][graphList[i].succ.get(k).to] = graphList[i].succ.get(k).capacity;
+            for(int k = 0; k < graph.G[i].succ.size(); k++){
+                graphMatrix[i][graph.G[i].succ.get(k).to] = graph.G[i].succ.get(k).capacity;
             }
         }
 
@@ -41,27 +42,45 @@ public class MaxFlow {
      * Finds the shortest path from the source to the sink node
      * @return adjacency list of the path or null if none exist
      */
-    private LinkedList<Integer> findPath(){
+    // This doesn't work. I need to figure it out by using Graphs and GraphNodes
+    GraphNode[] findPath(){
         int s = 0;
-        int t = this.numOfNodes;
-        LinkedList<Integer> path = new LinkedList<>();
-        path.add(s);
-        LinkedList<Integer> tempPath = path;
-
-        LinkedList<LinkedList<Integer>> queue = new LinkedList<>();
+        int numOfNodes = this.NUM_OF_NODES;
+        int t = numOfNodes - 1;
+        GraphNode[] path = new GraphNode[numOfNodes];
+//        GraphNode[] tempPath = new GraphNode[numOfNodes];
+        for(int i = 0; i < numOfNodes; i++) {
+//            tempPath[i] = new GraphNode(i);
+            path[i] = new GraphNode(i);
+        }
+        LinkedList<GraphNode[]> queue = new LinkedList<>();
         queue.add(path);
-        while(queue != null){
+        while(!queue.isEmpty()){
             path = queue.removeFirst();
-            int from = path.getLast();
-            for(int to = 0; to < this.numOfNodes; to++){
-                if(this.residualMatrix[from][to] > 0 && !path.contains(to)){
-                    // I need to also check if it's been visited. I think I've got it.
-                    tempPath.add(this.residualMatrix[from][to]);
+
+            // loop to find which GraphNode was the last one touched
+            int lastNode = s;
+            while(!path[lastNode].succ.isEmpty()){
+                lastNode = path[lastNode].succ.getFirst().to;
+            }
+
+            // adds all items that go from lastNode to the queue as new graphs and marks them as visited
+            for(int to = 0; to < numOfNodes; to++){
+                GraphNode[] tempPath = new GraphNode[numOfNodes];
+                for(int i = 0; i < numOfNodes; i++) {
+                    tempPath[i] = new GraphNode(i);
+                    if(path[i].succ != tempPath[i].succ) {
+                        tempPath[i].succ = (LinkedList) path[i].succ.clone();
+                    }
+                }
+                if(this.residualMatrix[lastNode][to] > 0 && !path[to].visited){
+                    tempPath[lastNode].addEdge(lastNode, to, this.residualMatrix[lastNode][to]);
+                    tempPath[lastNode].visited = true;
+                    tempPath[to].parent = lastNode;
                     if(to == t){
                         return tempPath;
                     }
                     queue.add(tempPath);
-                    tempPath = path;
                 }
             }
 
@@ -69,10 +88,22 @@ public class MaxFlow {
         return null;
     }
 
+//    GraphNode[] partialPath(int lastNode, int to, GraphNode[] path){
+//        if(this.residualMatrix[lastNode][to] > 0 && !path[to].visited){
+//            path[lastNode].addEdge(lastNode, to, this.residualMatrix[lastNode][to]);
+//            tempPath[lastNode].visited = true;
+//            tempPath[to].parent = lastNode;
+//            if(to == path.length - 1){
+//                return tempPath;
+//            }
+////            queue.add(tempPath);
+//        }
+//    }
+
     /**
      * Updates the residual matrix according to the max flow of the path
      */
-    void augmentPath(LinkedList<Integer> path){
+    void augmentPath(Graph path){
         int flow = maxPathFlow(path);
         // subtract the capacity from edge(to, from) and add to edge(from, to).
     }
@@ -82,7 +113,7 @@ public class MaxFlow {
      * @param path is the path from source to sink
      * @return the max flow of the path
      */
-    private int maxPathFlow(LinkedList<Integer> path){
+    private int maxPathFlow(Graph path){
         return 0;
     }
 
@@ -100,8 +131,8 @@ public class MaxFlow {
      */
     public int getDemand(){
         int demand = 0;
-        for(int i = 0; i < numOfNodes; i++){
-            demand += graphMatrix[numOfNodes - 1][i];
+        for(int i = 0; i < NUM_OF_NODES; i++){
+            demand += GRAPH_MATRIX[NUM_OF_NODES - 1][i];
         }
         return demand;
     }
