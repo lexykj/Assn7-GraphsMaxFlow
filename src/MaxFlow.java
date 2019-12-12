@@ -3,7 +3,7 @@ import java.util.LinkedList;
 public class MaxFlow {
     int[][] GRAPH_MATRIX;
     int[][] residualMatrix;
-    LinkedList<LinkedList<Integer>> allUsedPaths;
+    LinkedList<GraphNode[]> allUsedPaths;
     int NUM_OF_NODES;
     Graph ORIGINAL_GRAPH;
 
@@ -78,6 +78,7 @@ public class MaxFlow {
                     tempPath[lastNode].visited = true;
                     tempPath[to].parent = lastNode;
                     if(to == t){
+                        allUsedPaths.add(tempPath);
                         return tempPath;
                     }
                     queue.add(tempPath);
@@ -88,22 +89,10 @@ public class MaxFlow {
         return null;
     }
 
-//    GraphNode[] partialPath(int lastNode, int to, GraphNode[] path){
-//        if(this.residualMatrix[lastNode][to] > 0 && !path[to].visited){
-//            path[lastNode].addEdge(lastNode, to, this.residualMatrix[lastNode][to]);
-//            tempPath[lastNode].visited = true;
-//            tempPath[to].parent = lastNode;
-//            if(to == path.length - 1){
-//                return tempPath;
-//            }
-////            queue.add(tempPath);
-//        }
-//    }
-
     /**
      * Updates the residual matrix according to the max flow of the path
      */
-    void augmentPath(Graph path){
+    private void augmentPath(GraphNode[] path){
         int flow = maxPathFlow(path);
         // subtract the capacity from edge(to, from) and add to edge(from, to).
     }
@@ -113,8 +102,15 @@ public class MaxFlow {
      * @param path is the path from source to sink
      * @return the max flow of the path
      */
-    private int maxPathFlow(Graph path){
-        return 0;
+    int maxPathFlow(GraphNode[] path){
+        int lastNode = 0;
+        // maxFlow just needs to start at a really big number
+        int maxFlow = 1000000;
+        while(!path[lastNode].succ.isEmpty()){
+            maxFlow = Math.min(path[lastNode].succ.get(0).capacity, maxFlow);
+            lastNode = path[lastNode].succ.get(0).to;
+        }
+        return maxFlow;
     }
 
     /**

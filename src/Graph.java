@@ -29,8 +29,8 @@ public class Graph {
         while(!path[lastNode].succ.isEmpty()){
             lastNode = path[lastNode].succ.get(0).to;
             System.out.print(path[lastNode].toString());
-
         }
+        System.out.println(graph1Flow.maxPathFlow(path));
     }
 
     public int getVertexCt() {
