@@ -15,14 +15,14 @@ public class Graph {
     public static void main(String[] args) {
         Graph graph1 = new Graph();
         graph1.makeGraph("src" + File.separator + "demands1.txt");
-//        System.out.println(graph1.toString());
-//        MaxFlow graph1Flow = new MaxFlow(graph1.G);
-//        for(int i = 0; i < graph1.vertexCt; i++){
-//            for(int j = 0; j < graph1.vertexCt; j++){
-//                System.out.print(graph1Flow.graphMatrix[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
+        System.out.println(graph1.toString());
+        MaxFlow graph1Flow = new MaxFlow(graph1.G);
+        for(int i = 0; i < graph1.vertexCt; i++){
+            for(int j = 0; j < graph1.vertexCt; j++){
+                System.out.print(graph1Flow.graphMatrix[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 
     public int getVertexCt() {
