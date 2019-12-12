@@ -60,20 +60,22 @@ public class MaxFlow {
 
             // loop to find which GraphNode was the last one touched
             int lastNode = s;
-            while(!path[lastNode].succ.isEmpty()){
+            while(!path[lastNode].succ.isEmpty() && path[lastNode].visited){
+//                path[lastNode].visited = true;
                 lastNode = path[lastNode].succ.getFirst().to;
             }
 
             // adds all items that go from lastNode to the queue as new graphs and marks them as visited
             for(int to = 0; to < numOfNodes; to++){
-                GraphNode[] tempPath = new GraphNode[numOfNodes];
-                for(int i = 0; i < numOfNodes; i++) {
-                    tempPath[i] = new GraphNode(i);
-                    if(path[i].succ != tempPath[i].succ) {
-                        tempPath[i].succ = (LinkedList) path[i].succ.clone();
-                    }
-                }
                 if(this.residualMatrix[lastNode][to] > 0 && !path[to].visited){
+                    GraphNode[] tempPath = new GraphNode[numOfNodes];
+                    for(int i = 0; i < numOfNodes; i++) {
+                        tempPath[i] = new GraphNode(i);
+                        if(path[i].succ != tempPath[i].succ) {
+                            tempPath[i].succ = (LinkedList) path[i].succ.clone();
+                            tempPath[i].visited = path[i].visited;
+                        }
+                    }
                     tempPath[lastNode].addEdge(lastNode, to, this.residualMatrix[lastNode][to]);
                     tempPath[lastNode].visited = true;
                     tempPath[to].parent = lastNode;
@@ -122,11 +124,22 @@ public class MaxFlow {
     }
 
     /**
-     * Takes the sum of all flow leaving the sink node.
-     * @return the total max flow for this graph
+     * Brings all the MaxFlow functions together to find the max flow of the graph.
+     * @return the sum of all flow leaving the sink node
      */
     public int getMaxFlow(){
-        return 0;
+        int totalFlow = 0;
+        GraphNode[] path = findPath();
+//        int pathFlow = maxPathFlow(path);
+//        augmentPath(path);
+        while(path != null){
+            augmentPath(path);
+            path = findPath();
+        }
+        for(int i = 0; i < this.NUM_OF_NODES; i++){
+            totalFlow += this.residualMatrix[this.NUM_OF_NODES - 1][i];
+        }
+        return totalFlow;
     }
 
     /**
