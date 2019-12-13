@@ -41,7 +41,8 @@ public class Graph {
 //            }
 //            System.out.println();
 //        }
-        System.out.println(graph1Flow.getMaxFlow());
+        graph1Flow.getMaxFlow();
+        System.out.println(graph1Flow.outputToString());
     }
 
     public int getVertexCt() {

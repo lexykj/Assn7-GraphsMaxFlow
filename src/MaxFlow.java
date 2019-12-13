@@ -6,6 +6,7 @@ public class MaxFlow {
     LinkedList<GraphNode[]> allUsedPaths;
     int NUM_OF_NODES;
     Graph ORIGINAL_GRAPH;
+    int totalMaxFlow;
 
     MaxFlow(Graph graph){
         this.ORIGINAL_GRAPH = graph;
@@ -13,7 +14,7 @@ public class MaxFlow {
         this.NUM_OF_NODES = graph.G.length;
         this.residualMatrix = this.GRAPH_MATRIX;
         this.allUsedPaths = new LinkedList<>();
-
+        this.totalMaxFlow = -1;
     }
 
     /**
@@ -128,6 +129,9 @@ public class MaxFlow {
      * @return the sum of all flow leaving the sink node
      */
     public int getMaxFlow(){
+        if(totalMaxFlow >= 0){
+            return totalMaxFlow;
+        }
         int totalFlow = 0;
         GraphNode[] path = findPath();
 //        int pathFlow = maxPathFlow(path);
@@ -158,11 +162,47 @@ public class MaxFlow {
      *
      * @return multiple lines saying "Edge (0,1) transports x cases"
      */
-    public String edgeFlowToString(){
-        return "";
+    private String flowFoundToString(){
+        StringBuilder edgeString = new StringBuilder();
+        for(int i = 0; i < allUsedPaths.size(); i++){
+            edgeString.append("Found flow ");
+            edgeString.append(maxPathFlow(allUsedPaths.get(i)));
+            edgeString.append(":");
+            int from = 0;
+            edgeString.append(" " + from);
+            while(!allUsedPaths.get(i)[from].succ.isEmpty()){
+                from = allUsedPaths.get(i)[from].succ.get(0).to;
+                edgeString.append(" " + from);
+            }
+            edgeString.append("\n");
+        }
+        return edgeString.toString();
     }
 
-    public String pathsUsedToString(){
-        return "";
+    private String edgeTransportsToString(){
+        StringBuilder pathString = new StringBuilder();
+        for(int from = 0; from < NUM_OF_NODES; from++){
+            int to;
+            for(int i = 0; i < ORIGINAL_GRAPH.G[from].succ.size(); i++){
+                to = ORIGINAL_GRAPH.G[from].succ.get(i).to;
+                int capacity = residualMatrix[to][from];
+                if(capacity > 0){
+                    pathString.append("Edge (" + from + ", " + to + ") transports ");
+                    pathString.append(capacity + " cases\n");
+                }
+            }
+        }
+        return pathString.toString();
+    }
+
+    public String outputToString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(ORIGINAL_GRAPH.graphName);
+        sb.append("\n");
+        sb.append(flowFoundToString());
+        sb.append("Success Produced " + getMaxFlow());
+        sb.append(": Demand " + getDemand() + "\n");
+        sb.append(edgeTransportsToString());
+        return sb.toString();
     }
 }
