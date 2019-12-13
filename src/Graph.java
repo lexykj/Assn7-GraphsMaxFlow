@@ -15,32 +15,8 @@ public class Graph {
     public static void main(String[] args) {
         Graph graph1 = new Graph();
         graph1.makeGraph("src" + File.separator + "demands1.txt");
-        System.out.println(graph1.toString());
+//        System.out.println(graph1.toString());
         MaxFlow graph1Flow = new MaxFlow(graph1);
-//        for(int i = 0; i < graph1.vertexCt; i++){
-//            for(int j = 0; j < graph1.vertexCt; j++){
-//                System.out.print(graph1Flow.GRAPH_MATRIX[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
-//        GraphNode[] path = graph1Flow.findPath();
-//        graph1Flow.augmentPath(path);
-//        System.out.println();
-//
-//        int from = 0;
-//        System.out.print(path[from].toString());
-//        while(!path[from].succ.isEmpty()){
-//            from = path[from].succ.get(0).to;
-//            System.out.print(path[from].toString());
-//        }
-//        System.out.println(graph1Flow.maxPathFlow(path) + "\n");
-//
-//        for(int i = 0; i < graph1.vertexCt; i++){
-//            for(int j = 0; j < graph1.vertexCt; j++){
-//                System.out.print(graph1Flow.residualMatrix[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
         graph1Flow.getMaxFlow();
         System.out.println(graph1Flow.outputToString());
     }
